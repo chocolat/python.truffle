@@ -1,0 +1,17 @@
+(trigger
+    (key [[alt][shift][cmd]R]))
+
+(name [Run Project Unit Tests])
+
+(only-in source.python)
+
+(input nothing)
+
+(output html)
+
+(save project)
+
+(script [# Find all files that end with "Test.py" and run 
+# them.
+
+find . -name "*Test.py" -exec "${TM_PYTHON:-python}" '{}' \;|pre])

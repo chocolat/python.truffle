@@ -1,0 +1,960 @@
+(root source.python
+    (zone comment.line.number-sign.python
+        (match
+            (regex [(#).*$\n?]
+                (1 punctuation.definition.comment.python))))
+    (zone constant.numeric.integer.long.hexadecimal.python
+        (match
+            (regex [\b(?i:(0x\h*)L)])))
+    (zone constant.numeric.integer.hexadecimal.python
+        (match
+            (regex [\b(?i:(0x\h*))])))
+    (zone constant.numeric.integer.long.octal.python
+        (match
+            (regex [\b(?i:(0[0-7]+)L)])))
+    (zone constant.numeric.integer.octal.python
+        (match
+            (regex [\b(0[0-7]+)])))
+    (zone constant.numeric.complex.python
+        (match
+            (regex [\b(?i:(((\d+(\.(?=[^a-zA-Z_])\d*)?|(?<=[^0-9a-zA-Z_])\.\d+)(e[\-\+]?\d+)?))J)])))
+    (zone constant.numeric.float.python
+        (match
+            (regex [\b(?i:(\d+\.\d*(e[\-\+]?\d+)?))(?=[^a-zA-Z_])])))
+    (zone constant.numeric.float.python
+        (match
+            (regex [(?<=[^0-9a-zA-Z_])(?i:(\.\d+(e[\-\+]?\d+)?))])))
+    (zone constant.numeric.float.python
+        (match
+            (regex [\b(?i:(\d+e[\-\+]?\d+))])))
+    (zone constant.numeric.integer.long.decimal.python
+        (match
+            (regex [\b(?i:([1-9]+[0-9]*|0)L)])))
+    (zone constant.numeric.integer.decimal.python
+        (match
+            (regex [\b([1-9]+[0-9]*|0)])))
+    (zone
+        (match
+            (regex [\b(global)\b]
+                (1 storage.modifier.global.python))))
+    (zone
+        (match
+            (regex [\b(?:(import)|(from))\b]
+                (1 keyword.control.import.python)
+                (2 keyword.control.import.from.python))))
+    (zone keyword.control.flow.python
+        (match
+            (list elif else except finally for if try while with break continue pass raise return yield)
+            (boundary.both)))
+    (zone keyword.operator.logical.python
+        (match
+            (list and in is not or)
+            (boundary.both)))
+    (zone
+        (match
+            (regex [\b(as|assert|del|exec|print)\b]
+                (1 keyword.other.python))))
+    (zone invalid.deprecated.operator.python
+        (match <>))
+    (zone keyword.operator.comparison.python
+        (match
+            (regex <\=|>\=|\=\=|<|>|\!\=)))
+    (zone keyword.operator.assignment.augmented.python
+        (match
+            (regex \+\=|-\=|\*\=|/\=|//\=|%\=|&\=|\|\=|\^\=|>>\=|<<\=|\*\*\=)))
+    (zone keyword.operator.arithmetic.python
+        (match
+            (regex \+|\-|\*|\*\*|/|//|%|<<|>>|&|\||\^|~)))
+    (zone keyword.operator.assignment.python
+        (match
+            (regex \=)))
+    (zone meta.class.old-style.python
+        (start
+            (regex [^\s*(class)\s+(?=[a-zA-Z_][a-zA-Z_0-9]*\s*\:)]
+                (1 storage.type.class.python)))
+        (end
+            (regex [\s*(:)]
+                (1 punctuation.section.class.begin.python)))
+        (subzones
+            (include @entity_name_class)))
+    (zone meta.class.python
+        (start
+            (regex [^\s*(class)\s+(?=[a-zA-Z_][a-zA-Z_0-9]*\s*\()]
+                (1 storage.type.class.python)))
+        (end
+            (regex [(\))\s*(?:(\:)|(.*$\n?))]
+                (3 invalid.illegal.missing-section-begin.python)
+                (1 punctuation.definition.inheritance.end.python)
+                (2 punctuation.section.class.begin.python)))
+        (subzones
+            (zone
+                (inner-identifier entity.name.type.class.python)
+                (start
+                    (regex [(?=[A-Za-z_][A-Za-z0-9_]*)]))
+                (end
+                    (regex [(?![A-Za-z0-9_])]))
+                (subzones
+                    (include @entity_name_class)))
+            (zone
+                (inner-identifier meta.class.inheritance.python)
+                (start
+                    (regex [(\()]
+                        (1 punctuation.definition.inheritance.begin.python)))
+                (end
+                    (regex [(?=\)|:)]))
+                (subzones
+                    (zone
+                        (inner-identifier entity.other.inherited-class.python)
+                        (start
+                            (regex [(?<=\(|,)\s*]))
+                        (end
+                            (regex [\s*(?:(,)|(?=\)))]
+                                (1 punctuation.separator.inheritance.python)))
+                        (subzones
+                            (include $self)))))))
+    (zone meta.class.python
+        (start
+            (regex [^\s*(class)\s+(?=[a-zA-Z_][a-zA-Z_0-9])]
+                (1 storage.type.class.python)))
+        (end
+            (regex [(\()|\s*($\n?|#.*$\n?)]
+                (1 punctuation.definition.inheritance.begin.python)
+                (2 invalid.illegal.missing-inheritance.python)))
+        (subzones
+            (zone
+                (inner-identifier entity.name.type.class.python)
+                (start
+                    (regex [(?=[A-Za-z_][A-Za-z0-9_]*)]))
+                (end
+                    (regex [(?![A-Za-z0-9_])]))
+                (subzones
+                    (include @entity_name_function)))))
+    (zone meta.function.python
+        (start
+            (regex [^\s*(def)\s+(?=[A-Za-z_][A-Za-z0-9_]*\s*\()]
+                (1 storage.type.function.python)))
+        (end
+            (regex [(\))\s*(?:(\:)|(.*$\n?))]
+                (3 invalid.illegal.missing-section-begin.python)
+                (1 punctuation.definition.parameters.end.python)
+                (2 punctuation.section.function.begin.python)))
+        (subzones
+            (zone
+                (inner-identifier entity.name.function.python)
+                (start
+                    (regex [(?=[A-Za-z_][A-Za-z0-9_]*)]))
+                (end
+                    (regex [(?![A-Za-z0-9_])]))
+                (subzones
+                    (include @entity_name_function)))
+            (zone
+                (inner-identifier meta.function.parameters.python)
+                (start
+                    (regex [(\()]
+                        (1 punctuation.definition.parameters.begin.python)))
+                (end
+                    (regex [(?=\)\s*\:)]))
+                (subzones
+                    (include @keyword_arguments)
+                    (zone
+                        (match
+                            (regex [\b([a-zA-Z_][a-zA-Z_0-9]*)\s*(?:(,)|(?=[\n\)]))]
+                                (1 variable.parameter.function.python)
+                                (2 punctuation.separator.parameters.python))))))))
+    (zone meta.function.python
+        (start
+            (regex [^\s*(def)\s+(?=[A-Za-z_][A-Za-z0-9_]*)]
+                (1 storage.type.function.python)))
+        (end
+            (regex [(\()|\s*($\n?|#.*$\n?)]
+                (1 punctuation.definition.parameters.begin.python)
+                (2 invalid.illegal.missing-parameters.python)))
+        (subzones
+            (zone
+                (inner-identifier entity.name.function.python)
+                (start
+                    (regex [(?=[A-Za-z_][A-Za-z0-9_]*)]))
+                (end
+                    (regex [(?![A-Za-z0-9_])]))
+                (subzones
+                    (include @entity_name_function)))))
+    (zone meta.function.inline.python
+        (start
+            (regex [(lambda)(?=\s+)]
+                (1 storage.type.function.inline.python)))
+        (end
+            (regex [(\:)]
+                (3 invalid.illegal.missing-section-begin.python)
+                (1 punctuation.definition.parameters.end.python)
+                (2 punctuation.section.function.begin.python)))
+        (subzones
+            (zone
+                (inner-identifier meta.function.inline.parameters.python)
+                (start
+                    (regex \s+))
+                (end
+                    (regex [(?=\:)]))
+                (subzones
+                    (include @keyword_arguments)
+                    (zone
+                        (match
+                            (regex [\b([a-zA-Z_][a-zA-Z_0-9]*)\s*(?:(,)|(?=[\n\)\:]))]
+                                (1 variable.parameter.function.python)
+                                (2 punctuation.separator.parameters.python))))))))
+    (zone meta.function.decorator.python
+        (start
+            (regex [^\s*(?=@\s*[A-Za-z_][A-Za-z0-9_]*(?:\.[a-zA-Z_][a-zA-Z_0-9]*)*\s*\()]))
+        (end
+            (regex [(\))]
+                (1 punctuation.definition.arguments.end.python)))
+        (subzones
+            (zone
+                (inner-identifier entity.name.function.decorator.python)
+                (start
+                    (regex [(?=(@)\s*[A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)*\s*\()]
+                        (1 punctuation.definition.decorator.python)))
+                (end
+                    (regex [(?=\s*\()]))
+                (subzones
+                    (include @dotted_name)))
+            (zone
+                (inner-identifier meta.function.decorator.arguments.python)
+                (start
+                    (regex [(\()]
+                        (1 punctuation.definition.arguments.begin.python)))
+                (end
+                    (regex [(?=\))]))
+                (subzones
+                    (include @keyword_arguments)
+                    (include $self)))))
+    (zone meta.function.decorator.python
+        (start
+            (regex [^\s*(?=@\s*[A-Za-z_][A-Za-z0-9_]*(?:\.[a-zA-Z_][a-zA-Z_0-9]*)*)]))
+        (end
+            (regex [(?=\s|$\n?|#)]))
+        (subzones
+            (zone
+                (start
+                    (regex [(?=(@)\s*[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*)]
+                        (1 punctuation.definition.decorator.python)))
+                (end
+                    (regex [(?=\s|$\n?|#)]))
+                (subzones
+                    (include @dotted_name)))))
+    (zone meta.function-call.python
+        (start
+            (regex `(?<=\)|\])\s*(\()`
+                (1 punctuation.definition.arguments.begin.python)))
+        (end
+            (regex [(\))]
+                (1 punctuation.definition.arguments.end.python)))
+        (subzones
+            (include @keyword_arguments)
+            (include $self)))
+    (zone meta.function-call.python
+        (start
+            (regex [(?=[A-Za-z_][A-Za-z0-9_]*(?:\.[a-zA-Z_][a-zA-Z_0-9]*)*\s*\()]))
+        (end
+            (regex [(\))]
+                (1 punctuation.definition.arguments.end.python)))
+        (subzones
+            (zone
+                (start
+                    (regex [(?=[A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)*\s*\()]))
+                (end
+                    (regex [(?=\s*\()]))
+                (subzones
+                    (include @dotted_name)))
+            (zone
+                (inner-identifier meta.function-call.arguments.python)
+                (start
+                    (regex [(\()]
+                        (1 punctuation.definition.arguments.begin.python)))
+                (end
+                    (regex [(?=\))]))
+                (subzones
+                    (include @keyword_arguments)
+                    (include $self)))))
+    (zone meta.item-access.python
+        (start
+            (regex `(?=[A-Za-z_][A-Za-z0-9_]*(?:\.[a-zA-Z_][a-zA-Z_0-9]*)*\s*\[)`))
+        (end
+            (regex `(\])`
+                (1 punctuation.definition.arguments.end.python)))
+        (subzones
+            (zone
+                (start
+                    (regex `(?=[A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)*\s*\[)`))
+                (end
+                    (regex `(?=\s*\[)`))
+                (subzones
+                    (include @dotted_name)))
+            (zone
+                (inner-identifier meta.item-access.arguments.python)
+                (start
+                    (regex `(\[)`
+                        (1 punctuation.definition.arguments.begin.python)))
+                (end
+                    (regex `(?=\])`))
+                (subzones
+                    (include $self)))))
+    (zone meta.item-access.python
+        (start
+            (regex `(?<=\)|\])\s*(\[)`
+                (1 punctuation.definition.arguments.begin.python)))
+        (end
+            (regex `(\])`
+                (1 punctuation.definition.arguments.end.python)))
+        (subzones
+            (include $self)))
+    (zone
+        (match
+            (regex [\b(def|lambda)\b]
+                (1 storage.type.function.python))))
+    (zone
+        (match
+            (regex [\b(class)\b]
+                (1 storage.type.class.python))))
+    (include @line_continuation)
+    (include @language_variables)
+    (zone constant.language.python
+        (match
+            (list None True False Ellipsis NotImplemented)
+            (boundary.both)))
+    (include @string_quoted_single)
+    (include @string_quoted_double)
+    (include @dotted_name)
+    (zone
+        (start
+            (regex [(\()]))
+        (end
+            (regex [(\))]))
+        (subzones
+            (include $self)))
+    (zone
+        (match
+            (regex [(\[)(\s*(\]))\b]
+                (3 punctuation.definition.list.end.python)
+                (1 punctuation.definition.list.begin.python)
+                (2 meta.empty-list.python))))
+    (zone meta.structure.list.python
+        (start
+            (regex `(\[)`
+                (1 punctuation.definition.list.begin.python)))
+        (end
+            (regex `(\])`
+                (1 punctuation.definition.list.end.python)))
+        (subzones
+            (zone
+                (inner-identifier meta.structure.list.item.python)
+                (start
+                    (regex [(?<=\[|\,)\s*(?![\],])]))
+                (end
+                    (regex `\s*(?:(,)|(?=\]))`
+                        (1 punctuation.separator.list.python)))
+                (subzones
+                    (include $self)))))
+    (zone meta.structure.tuple.python
+        (match
+            (regex [(\()(\s*(\)))]
+                (3 punctuation.definition.tuple.end.python)
+                (1 punctuation.definition.tuple.begin.python)
+                (2 meta.empty-tuple.python))))
+    (zone meta.structure.dictionary.python
+        (match
+            (regex [(\{)(\s*(\}))]
+                (3 punctuation.definition.dictionary.end.python)
+                (1 punctuation.definition.dictionary.begin.python)
+                (2 meta.empty-dictionary.python))))
+    (zone meta.structure.dictionary.python
+        (start
+            (regex [(\{)]
+                (1 punctuation.definition.dictionary.begin.python)))
+        (end
+            (regex [(\})]
+                (1 punctuation.definition.dictionary.end.python)))
+        (subzones
+            (zone
+                (inner-identifier meta.structure.dictionary.key.python)
+                (start
+                    (regex [(?<=\{|\,|^)\s*(?![\},])]))
+                (end
+                    (regex [\s*(?:(?=\})|(\:))]
+                        (1 punctuation.separator.valuepair.dictionary.python)))
+                (subzones
+                    (include $self)))
+            (zone
+                (inner-identifier meta.structure.dictionary.value.python)
+                (start
+                    (regex [(?<=\:|^)\s*]))
+                (end
+                    (regex [\s*(?:(?=\})|(,))]
+                        (1 punctuation.separator.dictionary.python)))
+                (subzones
+                    (include $self))))))
+
+(collection docstrings
+    (zone comment.block.python
+        (start
+            (regex [^\s*(?=[uU]?[rR]?""")]))
+        (end
+            (regex [(?<=""")]))
+        (subzones
+            (include @string_quoted_double)))
+    (zone comment.block.python
+        (start
+            (regex [^\s*(?=[uU]?[rR]?''')]))
+        (end
+            (regex [(?<=''')]))
+        (subzones
+            (include @string_quoted_single))))
+
+(collection language_variables
+    (zone variable.language.python
+        (match
+            (list self cls)
+            (boundary.both))))
+
+(collection illegal_names
+    (zone invalid.illegal.name.python
+        (match
+            (list and as assert break class continue def del elif else except exec finally for from global if import in is lambda not or pass print raise return try while with yield)
+            (boundary.both))))
+
+(collection regular_expressions
+    (zone
+        (subzones
+            (include source.regexp.python))))
+
+(collection builtin_functions
+    (zone support.function.builtin.python
+        (match
+            (regex [(?x)\b(
+                __import__|all|abs|any|apply|callable|chr|cmp|coerce|compile|delattr|dir|
+                divmod|eval|execfile|filter|getattr|globals|hasattr|hash|hex|id|
+                input|intern|isinstance|issubclass|iter|len|locals|map|max|min|oct|
+                ord|pow|range|raw_input|reduce|reload|repr|round|setattr|sorted|
+                sum|unichr|vars|zip
+			)\b]))))
+
+(collection generic_names
+    (zone
+        (match
+            (regex [[A-Za-z_][A-Za-z0-9_]*]))))
+
+(collection entity_name_class
+    (include @illegal_names)
+    (include @generic_names))
+
+(collection keyword_arguments
+    (zone
+        (start
+            (regex [\b([a-zA-Z_][a-zA-Z_0-9]*)\s*(=)(?!=)]
+                (1 variable.parameter.function.python)
+                (2 keyword.operator.assignment.python)))
+        (end
+            (regex [\s*(?:(,)|(?=$\n?|[\)\:]))]
+                (1 punctuation.separator.parameters.python)))
+        (subzones
+            (include $self))))
+
+(collection magic_function_names
+    (zone support.function.magic.python
+        (match
+            (regex [(?x)\b(__(?:
+						abs|add|and|call|cmp|coerce|complex|contains|del|delattr|
+						delete|delitem|delslice|div|divmod|enter|eq|exit|float|
+						floordiv|ge|get|getattr|getattribute|getitem|getslice|gt|
+						hash|hex|iadd|iand|idiv|ifloordiv|ilshift|imod|imul|init|
+						int|invert|ior|ipow|irshift|isub|iter|itruediv|ixor|le|len|
+						long|lshift|lt|mod|mul|ne|neg|new|nonzero|oct|or|pos|pow|
+						radd|rand|rdiv|rdivmod|repr|rfloordiv|rlshift|rmod|rmul|ror|
+						rpow|rrshift|rshift|rsub|rtruediv|rxor|set|setattr|setitem|
+						setslice|str|sub|truediv|unicode|xor
+					)__)\b]))))
+
+(collection entity_name_function
+    (include @magic_function_names)
+    (include @illegal_names)
+    (include @generic_names))
+
+(collection strings
+    (include @string_quoted_double)
+    (include @string_quoted_single))
+
+(collection escaped_char
+    (zone
+        (match
+            (regex [(\\x[0-9A-F]{2})|(\\[0-7]{3})|(\\\n)|(\\\\)|(\\\")|(\\')|(\\a)|(\\b)|(\\f)|(\\n)|(\\r)|(\\t)|(\\v)]
+                (10 constant.character.escape.linefeed.python)
+                (2 constant.character.escape.octal.python)
+                (3 constant.character.escape.newline.python)
+                (11 constant.character.escape.return.python)
+                (4 constant.character.escape.backlash.python)
+                (5 constant.character.escape.double-quote.python)
+                (12 constant.character.escape.tab.python)
+                (6 constant.character.escape.single-quote.python)
+                (13 constant.character.escape.vertical-tab.python)
+                (7 constant.character.escape.bell.python)
+                (8 constant.character.escape.backspace.python)
+                (1 constant.character.escape.hex.python)
+                (9 constant.character.escape.formfeed.python)))))
+
+(collection constant_placeholder
+    (zone constant.other.placeholder.python
+        (match
+            (regex [(?i:%(\([a-z_]+\))?#?0?\-?[ ]?\+?([0-9]*|\*)(\.([0-9]*|\*))?[hL]?[a-z%])]))))
+
+(collection builtin_exceptions
+    (zone support.type.exception.python
+        (match
+            (regex [(?x)\b(
+                (
+                    Arithmetic|Assertion|Attribute|Buffer|EOF|Environment|FloatingPoint|IO|
+                    Import|Indentation|Index|Key|Lookup|Memory|Name|NotImplemented|OS|Overflow|
+                    Reference|Runtime|Standard|Syntax|System|Tab|Type|UnboundLocal|
+                    Unicode(Encode|Decode|Translate)?|
+                    Value|VMS|Windows|ZeroDivision
+                )Error|
+                ((Pending)?Deprecation|Runtime|Syntax|User|Future|Import|Unicode|Bytes)?Warning|
+                (Base)?Exception|
+                SystemExit|StopIteration|NotImplemented|KeyboardInterrupt|GeneratorExit
+			)\b]))))
+
+(collection escaped_unicode_char
+    (zone
+        (match
+            (regex [(\\U[0-9A-Fa-f]{8})|(\\u[0-9A-Fa-f]{4})|(\\N\{[a-zA-Z ]+\})]
+                (3 constant.character.escape.unicode.name.python)
+                (1 constant.character.escape.unicode.16-bit-hex.python)
+                (2 constant.character.escape.unicode.32-bit-hex.python)))))
+
+(collection line_continuation
+    (zone
+        (match
+            (regex [(\\)(.*)$\n?]
+                (1 punctuation.separator.continuation.line.python)
+                (2 invalid.illegal.unexpected-text.python)))))
+
+(collection builtin_types
+    (zone support.type.python
+        (match
+            (regex [(?x)\b(
+				basestring|bool|buffer|classmethod|complex|dict|enumerate|file|
+				float|frozenset|int|list|long|object|open|property|reversed|set|
+				slice|staticmethod|str|super|tuple|type|unicode|xrange
+			)\b]))))
+
+(collection magic_variable_names
+    (zone support.variable.magic.python
+        (match
+            (regex [\b__(all|bases|class|debug|dict|doc|file|members|metaclass|methods|name|slots|weakref)__\b]))))
+
+(collection function_name
+    (include @magic_function_names)
+    (include @magic_variable_names)
+    (include @builtin_exceptions)
+    (include @builtin_functions)
+    (include @builtin_types)
+    (include @generic_names))
+
+(collection dotted_name
+    (zone
+        (start
+            (regex [(?=[A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)*)]))
+        (end
+            (regex [(?![A-Za-z0-9_\.])]))
+        (subzones
+            (zone
+                (start
+                    (regex [(\.)(?=[A-Za-z_][A-Za-z0-9_]*)]))
+                (end
+                    (regex [(?![A-Za-z0-9_])]))
+                (subzones
+                    (include @magic_function_names)
+                    (include @magic_variable_names)
+                    (include @illegal_names)
+                    (include @generic_names)))
+            (zone
+                (start
+                    (regex [(?<!\.)(?=[A-Za-z_][A-Za-z0-9_]*)]))
+                (end
+                    (regex [(?![A-Za-z0-9_])]))
+                (subzones
+                    (include @builtin_functions)
+                    (include @builtin_types)
+                    (include @builtin_exceptions)
+                    (include @illegal_names)
+                    (include @magic_function_names)
+                    (include @magic_variable_names)
+                    (include @language_variables)
+                    (include @generic_names))))))
+
+(collection string_quoted_double
+    (zone string.quoted.double.block.unicode-raw-regex.python
+        (start
+            (regex [([uU]r)(""")]
+                (1 storage.type.string.python)
+                (2 punctuation.definition.string.begin.python)))
+        (end
+            (regex [((?<=""")(")""|""")]
+                (1 punctuation.definition.string.end.python)
+                (2 meta.empty-string.double.python)))
+        (subzones
+            (include @constant_placeholder)
+            (include @escaped_unicode_char)
+            (include @escaped_char)
+            (include @regular_expressions)))
+    (zone string.quoted.double.block.unicode-raw.python
+        (start
+            (regex [([uU]R)(""")]
+                (1 storage.type.string.python)
+                (2 punctuation.definition.string.begin.python)))
+        (end
+            (regex [((?<=""")(")""|""")]
+                (1 punctuation.definition.string.end.python)
+                (2 meta.empty-string.double.python)))
+        (subzones
+            (include @constant_placeholder)
+            (include @escaped_unicode_char)
+            (include @escaped_char)))
+    (zone string.quoted.double.block.raw-regex.python
+        (start
+            (regex [(r)(""")]
+                (1 storage.type.string.python)
+                (2 punctuation.definition.string.begin.python)))
+        (end
+            (regex [((?<=""")(")""|""")]
+                (1 punctuation.definition.string.end.python)
+                (2 meta.empty-string.double.python)))
+        (subzones
+            (include @constant_placeholder)
+            (include @escaped_char)
+            (include @regular_expressions)))
+    (zone string.quoted.double.block.raw.python
+        (start
+            (regex [(R)(""")]
+                (1 storage.type.string.python)
+                (2 punctuation.definition.string.begin.python)))
+        (end
+            (regex [((?<=""")(")""|""")]
+                (1 punctuation.definition.string.end.python)
+                (2 meta.empty-string.double.python)))
+        (subzones
+            (include @constant_placeholder)
+            (include @escaped_char)))
+    (zone string.quoted.double.block.unicode.python
+        (start
+            (regex [([uU])(""")]
+                (1 storage.type.string.python)
+                (2 punctuation.definition.string.begin.python)))
+        (end
+            (regex [((?<=""")(")""|""")]
+                (1 punctuation.definition.string.end.python)
+                (2 meta.empty-string.double.python)))
+        (subzones
+            (include @constant_placeholder)
+            (include @escaped_unicode_char)
+            (include @escaped_char)))
+    (zone string.quoted.double.single-line.unicode-raw-regex.python
+        (start
+            (regex [([uU]r)(")]
+                (1 storage.type.string.python)
+                (2 punctuation.definition.string.begin.python)))
+        (end
+            (regex [((?<=")(")|")|(\n)]
+                (3 invalid.illegal.unclosed-string.python)
+                (1 punctuation.definition.string.end.python)
+                (2 meta.empty-string.double.python)))
+        (subzones
+            (include @constant_placeholder)
+            (include @escaped_unicode_char)
+            (include @escaped_char)
+            (include @regular_expressions)))
+    (zone string.quoted.double.single-line.unicode-raw.python
+        (start
+            (regex [([uU]R)(")]
+                (1 storage.type.string.python)
+                (2 punctuation.definition.string.begin.python)))
+        (end
+            (regex [((?<=")(")|")|(\n)]
+                (3 invalid.illegal.unclosed-string.python)
+                (1 punctuation.definition.string.end.python)
+                (2 meta.empty-string.double.python)))
+        (subzones
+            (include @constant_placeholder)
+            (include @escaped_unicode_char)
+            (include @escaped_char)))
+    (zone string.quoted.double.single-line.raw-regex.python
+        (start
+            (regex [(r)(")]
+                (1 storage.type.string.python)
+                (2 punctuation.definition.string.begin.python)))
+        (end
+            (regex [((?<=")(")|")|(\n)]
+                (3 invalid.illegal.unclosed-string.python)
+                (1 punctuation.definition.string.end.python)
+                (2 meta.empty-string.double.python)))
+        (subzones
+            (include @constant_placeholder)
+            (include @escaped_char)
+            (include @regular_expressions)))
+    (zone string.quoted.double.single-line.raw.python
+        (start
+            (regex [(R)(")]
+                (1 storage.type.string.python)
+                (2 punctuation.definition.string.begin.python)))
+        (end
+            (regex [((?<=")(")|")|(\n)]
+                (3 invalid.illegal.unclosed-string.python)
+                (1 punctuation.definition.string.end.python)
+                (2 meta.empty-string.double.python)))
+        (subzones
+            (include @constant_placeholder)
+            (include @escaped_char)))
+    (zone string.quoted.double.single-line.unicode.python
+        (start
+            (regex [([uU])(")]
+                (1 storage.type.string.python)
+                (2 punctuation.definition.string.begin.python)))
+        (end
+            (regex [((?<=")(")|")|(\n)]
+                (3 invalid.illegal.unclosed-string.python)
+                (1 punctuation.definition.string.end.python)
+                (2 meta.empty-string.double.python)))
+        (subzones
+            (include @constant_placeholder)
+            (include @escaped_unicode_char)
+            (include @escaped_char)))
+    (zone string.quoted.double.block.sql.python
+        (start
+            (regex [(""")(?=\s*(SELECT|INSERT|UPDATE|DELETE|CREATE|REPLACE|ALTER))]
+                (1 punctuation.definition.string.begin.python)))
+        (end
+            (regex [((?<=""")(")""|""")]
+                (1 punctuation.definition.string.end.python)
+                (2 meta.empty-string.double.python)))
+        (subzones
+            (include @constant_placeholder)
+            (include @escaped_char)
+            (include source.sql)))
+    (zone string.quoted.double.single-line.sql.python
+        (start
+            (regex [(")(?=\s*(SELECT|INSERT|UPDATE|DELETE|CREATE|REPLACE|ALTER))]
+                (1 punctuation.definition.string.begin.python)))
+        (end
+            (regex [((?<=")(")|")|(\n)]
+                (3 invalid.illegal.unclosed-string.python)
+                (1 punctuation.definition.string.end.python)
+                (2 meta.empty-string.double.python)))
+        (subzones
+            (include @constant_placeholder)
+            (include @escaped_char)
+            (include source.sql)))
+    (zone string.quoted.double.block.python
+        (start
+            (regex [(""")]
+                (1 punctuation.definition.string.begin.python)))
+        (end
+            (regex [((?<=""")(")""|""")]
+                (1 punctuation.definition.string.end.python)
+                (2 meta.empty-string.double.python)))
+        (subzones
+            (include @constant_placeholder)
+            (include @escaped_char)))
+    (zone string.quoted.double.single-line.python
+        (start
+            (regex [(")]
+                (1 punctuation.definition.string.begin.python)))
+        (end
+            (regex [((?<=")(")|")|(\n)]
+                (3 invalid.illegal.unclosed-string.python)
+                (1 punctuation.definition.string.end.python)
+                (2 meta.empty-string.double.python)))
+        (subzones
+            (include @constant_placeholder)
+            (include @escaped_char))))
+
+(collection string_quoted_single
+    (zone string.quoted.single.single-line.python
+        (match
+            (regex [(?<!')(')(('))(?!')]
+                (3 meta.empty-string.single.python)
+                (1 punctuation.definition.string.begin.python)
+                (2 punctuation.definition.string.end.python))))
+    (zone string.quoted.single.block.unicode-raw-regex.python
+        (start
+            (regex [([uU]r)(''')]
+                (1 storage.type.string.python)
+                (2 punctuation.definition.string.begin.python)))
+        (end
+            (regex [((?<=''')(')''|''')]
+                (1 punctuation.definition.string.end.python)
+                (2 meta.empty-string.single.python)))
+        (subzones
+            (include @constant_placeholder)
+            (include @escaped_unicode_char)
+            (include @escaped_char)
+            (include @regular_expressions)))
+    (zone string.quoted.single.block.unicode-raw.python
+        (start
+            (regex [([uU]R)(''')]
+                (1 storage.type.string.python)
+                (2 punctuation.definition.string.begin.python)))
+        (end
+            (regex [((?<=''')(')''|''')]
+                (1 punctuation.definition.string.end.python)
+                (2 meta.empty-string.single.python)))
+        (subzones
+            (include @constant_placeholder)
+            (include @escaped_unicode_char)
+            (include @escaped_char)))
+    (zone string.quoted.single.block.raw-regex.python
+        (start
+            (regex [(r)(''')]
+                (1 storage.type.string.python)
+                (2 punctuation.definition.string.begin.python)))
+        (end
+            (regex [((?<=''')(')''|''')]
+                (1 punctuation.definition.string.end.python)
+                (2 meta.empty-string.single.python)))
+        (subzones
+            (include @constant_placeholder)
+            (include @escaped_char)
+            (include @regular_expressions)))
+    (zone string.quoted.single.block.raw.python
+        (start
+            (regex [(R)(''')]
+                (1 storage.type.string.python)
+                (2 punctuation.definition.string.begin.python)))
+        (end
+            (regex [((?<=''')(')''|''')]
+                (1 punctuation.definition.string.end.python)
+                (2 meta.empty-string.single.python)))
+        (subzones
+            (include @constant_placeholder)
+            (include @escaped_char)))
+    (zone string.quoted.single.block.unicode.python
+        (start
+            (regex [([uU])(''')]
+                (1 storage.type.string.python)
+                (2 punctuation.definition.string.begin.python)))
+        (end
+            (regex [((?<=''')(')''|''')]
+                (1 punctuation.definition.string.end.python)
+                (2 meta.empty-string.single.python)))
+        (subzones
+            (include @constant_placeholder)
+            (include @escaped_unicode_char)
+            (include @escaped_char)))
+    (zone string.quoted.single.single-line.unicode-raw-regex.python
+        (start
+            (regex [([uU]r)(')]
+                (1 storage.type.string.python)
+                (2 punctuation.definition.string.begin.python)))
+        (end
+            (regex [(')|(\n)]
+                (1 punctuation.definition.string.end.python)
+                (2 invalid.illegal.unclosed-string.python)))
+        (subzones
+            (include @constant_placeholder)
+            (include @escaped_unicode_char)
+            (include @escaped_char)
+            (include @regular_expressions)))
+    (zone string.quoted.single.single-line.unicode-raw.python
+        (start
+            (regex [([uU]R)(')]
+                (1 storage.type.string.python)
+                (2 punctuation.definition.string.begin.python)))
+        (end
+            (regex [(')|(\n)]
+                (1 punctuation.definition.string.end.python)
+                (2 invalid.illegal.unclosed-string.python)))
+        (subzones
+            (include @constant_placeholder)
+            (include @escaped_unicode_char)
+            (include @escaped_char)))
+    (zone string.quoted.single.single-line.raw-regex.python
+        (start
+            (regex [(r)(')]
+                (1 storage.type.string.python)
+                (2 punctuation.definition.string.begin.python)))
+        (end
+            (regex [(')|(\n)]
+                (1 punctuation.definition.string.end.python)
+                (2 invalid.illegal.unclosed-string.python)))
+        (subzones
+            (include @constant_placeholder)
+            (include @escaped_char)
+            (include @regular_expressions)))
+    (zone string.quoted.single.single-line.raw.python
+        (start
+            (regex [(R)(')]
+                (1 storage.type.string.python)
+                (2 punctuation.definition.string.begin.python)))
+        (end
+            (regex [(')|(\n)]
+                (1 punctuation.definition.string.end.python)
+                (2 invalid.illegal.unclosed-string.python)))
+        (subzones
+            (include @constant_placeholder)
+            (include @escaped_char)))
+    (zone string.quoted.single.single-line.unicode.python
+        (start
+            (regex [([uU])(')]
+                (1 storage.type.string.python)
+                (2 punctuation.definition.string.begin.python)))
+        (end
+            (regex [(')|(\n)]
+                (1 punctuation.definition.string.end.python)
+                (2 invalid.illegal.unclosed-string.python)))
+        (subzones
+            (include @constant_placeholder)
+            (include @escaped_unicode_char)
+            (include @escaped_char)))
+    (zone string.quoted.single.block.python
+        (start
+            (regex [(''')(?=\s*(SELECT|INSERT|UPDATE|DELETE|CREATE|REPLACE|ALTER))]
+                (1 punctuation.definition.string.begin.python)))
+        (end
+            (regex [((?<=''')(')''|''')]
+                (1 punctuation.definition.string.end.python)
+                (2 meta.empty-string.single.python)))
+        (subzones
+            (include @constant_placeholder)
+            (include @escaped_char)
+            (include source.sql)))
+    (zone string.quoted.single.single-line.python
+        (start
+            (regex [(')(?=\s*(SELECT|INSERT|UPDATE|DELETE|CREATE|REPLACE|ALTER))]
+                (1 punctuation.definition.string.begin.python)))
+        (end
+            (regex [(')|(\n)]
+                (1 punctuation.definition.string.end.python)
+                (2 invalid.illegal.unclosed-string.python)))
+        (subzones
+            (include @constant_placeholder)
+            (include @escaped_char)
+            (include source.sql)))
+    (zone string.quoted.single.block.python
+        (start
+            (regex [(''')]
+                (1 punctuation.definition.string.begin.python)))
+        (end
+            (regex [((?<=''')(')''|''')]
+                (1 punctuation.definition.string.end.python)
+                (2 meta.empty-string.single.python)))
+        (subzones
+            (include @constant_placeholder)
+            (include @escaped_char)))
+    (zone string.quoted.single.single-line.python
+        (start
+            (regex [(')]
+                (1 punctuation.definition.string.begin.python)))
+        (end
+            (regex [(')|(\n)]
+                (1 punctuation.definition.string.end.python)
+                (2 invalid.illegal.unclosed-string.python)))
+        (subzones
+            (include @constant_placeholder)
+            (include @escaped_char))))

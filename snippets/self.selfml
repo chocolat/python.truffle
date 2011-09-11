@@ -1,0 +1,8 @@
+(name self)
+
+(trigger
+    (tab .))
+
+(only-in source.python)
+
+(snippet self.)

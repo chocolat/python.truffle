@@ -1,0 +1,8 @@
+(name [Inside Class Def: Insert (..):])
+
+(trigger
+    (key [[shift](]))
+
+(only-in [source.python meta.class.python invalid.illegal.missing-inheritance.python])
+
+(snippet [(%{1="object"}):%{0}])

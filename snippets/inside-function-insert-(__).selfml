@@ -1,0 +1,8 @@
+(name [Inside Function Def: Insert (..):])
+
+(trigger
+    (key [[shift](]))
+
+(only-in [source.python meta.function.python invalid.illegal.missing-parameters.python])
+
+(snippet [(%{0}):])

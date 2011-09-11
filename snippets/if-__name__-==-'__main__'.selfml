@@ -1,0 +1,9 @@
+(name [if __name__ == '__main__'])
+
+(trigger
+    (tab ifmain))
+
+(only-in source.python)
+
+(snippet [if __name__ == '__main__':
+	%{1="main()"}%{0}])

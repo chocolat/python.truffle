@@ -1,0 +1,11 @@
+(name Try/Except)
+
+(trigger
+    (tab try))
+
+(only-in source.python)
+
+(snippet [try:
+	%{1="pass"}
+except %{2="Exception"}, %{3="e"}:
+	%{4="raise %{3}"}])

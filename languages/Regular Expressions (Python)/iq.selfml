@@ -1,0 +1,24 @@
+(detector
+    (extension re))
+
+(folding
+    (start [(/\*|\{|\()])
+    (stop [(\*/|\}|\))]))
+
+(in source.python
+    (indentation.decrease [^\s*(elif|else|except|finally)\b.*:])
+    (indentation.increase [^\s*(class|def|elif|else|except|finally|for|if|try|with|while)\b.*:\s*$])
+    (shell-variables
+        (TM_COMMENT_START [# ])
+        (TM_LINE_TERMINATOR :))
+    (comment.line [# ]))
+
+(in [source.python meta.function.python, source.python meta.class.python]
+    (symbol-list
+        (transformation [
+		s/class\s+([A-Za-z_][A-Za-z0-9_]*.+?\)?)(\:|$)/$1/g;
+		s/def\s+([A-Za-z_][A-Za-z0-9_]*\()(?:(.{,40}?\))|((.{40}).+?\)))(\:)/$1(?2:$2)(?3:$4…\))/g;
+	])))
+
+(in [source.python meta.function.decorator.python entity.name.function.decorator.python]
+    (symbol-list))

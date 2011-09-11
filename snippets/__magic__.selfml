@@ -1,0 +1,8 @@
+(name __magic__)
+
+(trigger
+    (tab __))
+
+(only-in source.python)
+
+(snippet [__%{1="init"}__])

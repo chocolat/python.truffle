@@ -1,0 +1,13 @@
+(trigger)
+
+(name [Cleanup Whitespace])
+
+(only-in source.python)
+
+(input selection)
+
+(output replace-selected)
+
+(save nothing)
+
+(script ["${TM_PYTHON:-python}" "${TM_BUNDLE_SUPPORT}/cleanup_whitespace.py"])

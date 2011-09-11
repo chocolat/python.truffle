@@ -1,0 +1,8 @@
+(name [Fail (a test)])
+
+(trigger
+    (tab fail))
+
+(only-in source.python)
+
+(snippet [self.fail('%{1="message"}')%{0}])

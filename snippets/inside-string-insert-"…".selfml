@@ -1,0 +1,8 @@
+(name [Inside String: Insert "…"])
+
+(trigger
+    (key [[shift]"]))
+
+(only-in [source.python string.quoted.double.single-line meta.empty-string.double])
+
+(snippet ["%{0}"])

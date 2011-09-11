@@ -1,0 +1,9 @@
+(name [New Method])
+
+(trigger
+    (tab defs))
+
+(only-in source.python)
+
+(snippet [def %{1="mname"}(self%{2/([^,])?.*/(?1:, )/}%{2="arg"}):
+	%{3="pass"}])

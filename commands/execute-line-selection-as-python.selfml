@@ -1,0 +1,37 @@
+(trigger
+    (key [[ctrl][shift]E]))
+
+(name [Execute Line/Selection as Python])
+
+(only-in source.python)
+
+(input selection line)
+
+(output after-selected)
+
+(save nothing)
+
+(script [#!/usr/bin/env python
+
+import os
+from sys import stdout, stdin, exit
+from traceback import format_stack
+
+py = stdin.read()
+
+if 'TM_SELECTED_SCOPE' in os.environ:
+    stdout.write(" ")
+else:
+    stdout.write("\n")
+
+try:
+    scope = {}
+    result = eval(py, globals(), scope)
+except:
+    exc = format_stack()
+    stdout.write(exc)
+    exit(206) # exiting with this code show's output in a tooltip 
+else:
+    stdout.write(repr(result))
+
+])

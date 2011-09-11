@@ -1,0 +1,88 @@
+(root source.regexp.python
+    (zone keyword.control.anchor.regexp
+        (match
+            (regex [\\[bBAZzG]|\^|\$])))
+    (zone keyword.other.back-reference.regexp
+        (match
+            (regex [\\[1-9][0-9]?])))
+    (zone keyword.operator.quantifier.regexp
+        (match
+            (regex [[?+*][?+]?|\{(\d+,\d+|\d+,|,\d+|\d+)\}\??])))
+    (zone keyword.operator.or.regexp
+        (match
+            (regex \|)))
+    (zone comment.block.regexp
+        (start
+            (regex [\(\?\#]))
+        (end
+            (regex [\)])))
+    (zone comment.line.number-sign.regexp
+        (match
+            (regex [(?<=^|\s)#\s[[a-zA-Z0-9,. \t?!-:][^\x{00}-\x{7F}]]*$])))
+    (zone keyword.other.option-toggle.regexp
+        (match
+            (regex [\(\?[iLmsux]+\)])))
+    (zone keyword.other.back-reference.named.regexp
+        (match
+            (regex [(\()(\?P=([a-zA-Z_][a-zA-Z_0-9]*\w*))(\))])))
+    (zone meta.group.assertion.regexp
+        (start
+            (regex [(\()((\?=)|(\?!)|(\?<=)|(\?<!))]
+                (3 meta.assertion.look-ahead.regexp)
+                (4 meta.assertion.negative-look-ahead.regexp)
+                (5 meta.assertion.look-behind.regexp)
+                (1 punctuation.definition.group.regexp)
+                (6 meta.assertion.negative-look-behind.regexp)
+                (2 punctuation.definition.group.assertion.regexp)))
+        (end
+            (regex [(\))]
+                (1 punctuation.definition.group.regexp)))
+        (subzones
+            (include $self)))
+    (zone meta.group.assertion.conditional.regexp
+        (start
+            (regex [(\()(\?\(([1-9][0-9]?|[a-zA-Z_][a-zA-Z_0-9]*)\))]
+                (3 entity.name.section.back-reference.regexp)
+                (1 punctuation.definition.group.regexp)
+                (2 punctuation.definition.group.assertion.conditional.regexp)))
+        (end
+            (regex [(\))]))
+        (subzones
+            (include $self)))
+    (zone meta.group.regexp
+        (start
+            (regex [(\()((\?P<)([a-z]\w*)(>)|(\?:))?]
+                (3 punctuation.definition.group.capture.regexp)
+                (4 entity.name.section.group.regexp)
+                (5 punctuation.definition.group.capture.regexp)
+                (1 punctuation.definition.group.regexp)
+                (6 punctuation.definition.group.no-capture.regexp)))
+        (end
+            (regex [(\))]
+                (1 punctuation.definition.group.regexp)))
+        (subzones
+            (include $self)))
+    (include @character-class))
+
+(collection character-class
+    (zone constant.character.character-class.regexp
+        (match
+            (regex [\\[wWsSdDhH]|\.])))
+    (zone constant.character.escape.backslash.regexp
+        (match
+            (regex \\.)))
+    (zone constant.other.character-class.set.regexp
+        (start
+            (regex `(\[)(\^)?`
+                (1 punctuation.definition.character-class.regexp)
+                (2 keyword.operator.negation.regexp)))
+        (end
+            (regex `(\])`
+                (1 punctuation.definition.character-class.regexp)))
+        (subzones
+            (include @character-class)
+            (zone constant.other.character-class.range.regexp
+                (match
+                    (regex `((\\.)|.)\-((\\.)|[^\]])`
+                        (4 constant.character.escape.backslash.regexp)
+                        (2 constant.character.escape.backslash.regexp)))))))

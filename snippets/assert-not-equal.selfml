@@ -1,0 +1,8 @@
+(name [Assert Not Equal])
+
+(trigger
+    (tab asne))
+
+(only-in source.python)
+
+(snippet [self.assertNotEqual(%{1="expected"}, %{2="actual"}%{3=", '%{4="message"}'"})%{0}])

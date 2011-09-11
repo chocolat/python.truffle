@@ -1,0 +1,8 @@
+(name Assert)
+
+(trigger
+    (tab as))
+
+(only-in source.python)
+
+(snippet [self.assert_(%{1="boolean expression"}%{2=", '%{3="message"}'"})%{0}])
