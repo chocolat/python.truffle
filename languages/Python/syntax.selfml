@@ -503,7 +503,7 @@
 (collection constant_placeholder
     (zone constant.other.placeholder.python
         (match
-            (regex [(?i:%(\([a-z_]+\))?#?0?\-?[ ]?\+?([0-9]*|\*)(\.([0-9]*|\*))?[hL]?[a-z%])]))))
+            (regex [(?i:(%(\([a-z_]+\))?#?0?\-?[ ]?\+?([0-9]*|\*)(\.([0-9]*|\*))?[hL]?[a-z%])|(\{([!\[\].:\w ]+)?\}))]))))
 
 (collection builtin_exceptions
     (zone support.type.exception.python
