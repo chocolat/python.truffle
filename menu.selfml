@@ -2,16 +2,12 @@
     command.run-project-unittests
     command.debug-script-in-terminal
     command.execute-line-selection-as-python
-    command.check-python-syntax
-    command.cleanup-whitespace
     ---
-    command.documentation-in-browser
     command.documentation-for-module
     ---
     (submenu Insert command.new-function command.super snippet.self snippet.__magic__)
     (submenu Declarations snippet.new-class snippet.new-method snippet.new-function)
     (submenu Idioms snippet.new-property snippet.if-__name__-==-'__main__' --- snippet.try-except snippet.try-except-else snippet.try-except-finally snippet.try-except-else-finally)
     (submenu Tests snippet.assert snippet.assert-equal snippet.assert-not-equal snippet.assert-raises [snippet.fail-(a-test)])
-    command.documentation-for-current-word
     command.show-symbol
     command.copy-symbol)
